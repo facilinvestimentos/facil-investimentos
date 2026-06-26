@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Área do Aluno — Fácil Investimentos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A1A17; --bg2:#0E2520; --surface:#12302B; --surface2:#163A33;
+    --line:rgba(234,242,238,.09); --line-strong:rgba(234,242,238,.16);
+    --ink:#EAF2EE; --muted:#8AA39B; --muted2:#6B847C;
+    --mint:#36E0A6; --mint-deep:#1FB985; --gold:#F0C04A; --danger:#FF8472;
+    --display:'Space Grotesk',sans-serif; --body:'Inter',sans-serif; --mono:'JetBrains Mono',monospace;
+    --r:16px; --r-sm:11px; --maxw:1180px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:
+      radial-gradient(1200px 600px at 78% -10%, rgba(54,224,166,.10), transparent 60%),
+      radial-gradient(900px 500px at 0% 0%, rgba(240,192,74,.06), transparent 55%),
+      var(--bg);
+    color:var(--ink); font-family:var(--body); line-height:1.55;
+    -webkit-font-smoothing:antialiased; min-height:100vh; overflow-x:hidden;
+  }
+  ::selection{background:rgba(54,224,166,.3)}
+  a{color:inherit;text-decoration:none}
+  button{font-family:var(--body);cursor:pointer;border:none;background:none;color:inherit}
+  input{font-family:var(--body);background:none;border:none;color:inherit;outline:none}
+  :focus-visible{outline:2px solid var(--mint);outline-offset:2px;border-radius:6px}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .mono{font-family:var(--mono);font-feature-settings:"tnum"}
+  .display{font-family:var(--display)}
+
+  /* ============ GATE DE LOGIN ============ */
+  .gate-screen{
+    min-height:100vh; display:grid; place-items:center; padding:24px;
+  }
+  .gate-card{
+    width:100%; max-width:440px;
+    background:linear-gradient(180deg, var(--surface), var(--bg2));
+    border:1px solid var(--line-strong); border-radius:20px;
+    padding:40px 32px;
+  }
+  .gate-logo{
+    display:flex; align-items:center; gap:10px; margin-bottom:28px;
+    font-family:var(--display); font-weight:700; font-size:20px;
+  }
+  .gate-mark{
+    width:36px; height:36px; border-radius:10px;
+    background:linear-gradient(135deg, var(--mint), var(--mint-deep));
+    display:grid; place-items:center;
+  }
+  .gate-mark svg{width:20px; height:20px}
+  .gate-card h1{
+    font-family:var(--display); font-size:26px; font-weight:600;
+    margin-bottom:8px; letter-spacing:-.5px;
+  }
+  .gate-card p.sub{color:var(--muted); font-size:14.5px; margin-bottom:24px}
+  .gate-form{display:flex; flex-direction:column; gap:14px}
+  .gate-input{
+    background:var(--bg2); border:1px solid var(--line-strong);
+    padding:14px 16px; border-radius:11px; font-size:15px; color:var(--ink);
+    transition:.18s;
+  }
+  .gate-input:focus{border-color:var(--mint); background:#0A1F1A}
+  .gate-btn{
+    background:var(--mint); color:#06241B; font-weight:600; font-size:15px;
+    padding:14px 18px; border-radius:11px; transition:.18s;
+  }
+  .gate-btn:hover{background:var(--mint-deep); color:#fff}
+  .gate-error{
+    background:rgba(255,132,114,.1); border:1px solid rgba(255,132,114,.3);
+    color:var(--danger); padding:11px 14px; border-radius:10px; font-size:13.5px;
+    display:none;
+  }
+  .gate-error.show{display:block}
+  .gate-help{
+    margin-top:20px; padding-top:20px; border-top:1px solid var(--line);
+    font-size:13px; color:var(--muted2); text-align:center; line-height:1.7;
+  }
+  .gate-help a{color:var(--mint); font-weight:500}
+
+  /* ============ ÁREA LOGADA ============ */
+  .app{display:none}
+  .app.active{display:block}
+
+  header.nav{
+    position:sticky; top:0; z-index:50; backdrop-filter:blur(14px);
+    background:rgba(10,26,23,.78); border-bottom:1px solid var(--line);
+  }
+  .nav-inner{display:flex; align-items:center; gap:24px; height:66px}
+  .logo{display:flex; align-items:center; gap:10px; font-family:var(--display); font-weight:700; font-size:18px}
+  .logo .mark{
+    width:32px; height:32px; border-radius:9px;
+    background:linear-gradient(135deg, var(--mint), var(--mint-deep));
+    display:grid; place-items:center;
+  }
+  .logo .mark svg{width:18px; height:18px}
+  .badge-aluno{
+    background:rgba(54,224,166,.14); color:var(--mint);
+    padding:5px 11px; border-radius:99px; font-size:12px; font-weight:600;
+    border:1px solid rgba(54,224,166,.25); margin-left:8px;
+  }
+  .nav-right{margin-left:auto; display:flex; align-items:center; gap:10px}
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:9px 15px; border-radius:10px; font-size:14px; font-weight:500;
+    transition:.18s; border:1px solid transparent;
+  }
+  .btn svg{width:16px; height:16px}
+  .btn-ghost{color:var(--ink); border-color:var(--line-strong)}
+  .btn-ghost:hover{background:var(--surface)}
+  .btn-primary{background:var(--mint); color:#06241B; font-weight:600}
+  .btn-primary:hover{background:var(--mint-deep); color:#fff}
+
+  /* ============ DASHBOARD ============ */
+  main.wrap{padding-top:36px; padding-bottom:80px}
+  .welcome{margin-bottom:36px}
+  .welcome .kick{
+    font-family:var(--mono); font-size:12px; color:var(--mint);
+    text-transform:uppercase; letter-spacing:1.5px; margin-bottom:10px;
+  }
+  .welcome h1{
+    font-family:var(--display); font-size:38px; font-weight:600;
+    letter-spacing:-.8px; line-height:1.15; margin-bottom:10px;
+  }
+  .welcome p{color:var(--muted); font-size:16px; max-width:620px}
+
+  /* progresso */
+  .progress-row{
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:14px;
+    margin-bottom:48px;
+  }
+  .stat{
+    background:var(--surface); border:1px solid var(--line);
+    padding:18px 20px; border-radius:14px;
+  }
+  .stat .label{font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px}
+  .stat .value{font-family:var(--display); font-size:26px; font-weight:600}
+  .stat .value.mint{color:var(--mint)}
+  .stat .value.gold{color:var(--gold)}
+
+  /* seções */
+  section.block{margin-bottom:56px}
+  .section-head{
+    display:flex; align-items:baseline; justify-content:space-between;
+    margin-bottom:20px; flex-wrap:wrap; gap:8px;
+  }
+  .section-head h2{
+    font-family:var(--display); font-size:24px; font-weight:600; letter-spacing:-.4px;
+  }
+  .section-head .hint{font-size:13.5px; color:var(--muted)}
+
+  /* cursos premium */
+  .courses-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:16px;
+  }
+  .course-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:22px; transition:.18s; cursor:pointer;
+    display:flex; flex-direction:column;
+  }
+  .course-card:hover{border-color:var(--mint); transform:translateY(-2px)}
+  .course-tag{
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(240,192,74,.12); color:var(--gold);
+    padding:4px 9px; border-radius:99px; font-size:11px; font-weight:600;
+    text-transform:uppercase; letter-spacing:.8px; width:fit-content; margin-bottom:14px;
+  }
+  .course-tag.mint{background:rgba(54,224,166,.12); color:var(--mint)}
+  .course-card h3{
+    font-family:var(--display); font-size:18px; font-weight:600;
+    margin-bottom:8px; line-height:1.3;
+  }
+  .course-card p{color:var(--muted); font-size:13.5px; margin-bottom:16px; flex:1}
+  .course-meta{
+    display:flex; align-items:center; gap:14px;
+    font-size:12.5px; color:var(--muted2); padding-top:14px;
+    border-top:1px solid var(--line);
+  }
+  .course-meta span{display:flex; align-items:center; gap:5px}
+  .course-meta svg{width:13px; height:13px}
+
+  /* ferramentas */
+  .tools-grid{
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px;
+  }
+  .tool-card{
+    background:linear-gradient(180deg, var(--surface), var(--bg2));
+    border:1px solid var(--line-strong); border-radius:16px;
+    padding:24px;
+  }
+  .tool-card h3{
+    font-family:var(--display); font-size:19px; font-weight:600;
+    margin-bottom:6px; display:flex; align-items:center; gap:10px;
+  }
+  .tool-card h3 .ico{
+    width:32px; height:32px; border-radius:8px; background:rgba(54,224,166,.13);
+    display:grid; place-items:center; color:var(--mint);
+  }
+  .tool-card h3 .ico svg{width:18px; height:18px}
+  .tool-card p.tdesc{color:var(--muted); font-size:13.5px; margin-bottom:18px}
+  .tool-row{
+    display:flex; align-items:center; gap:10px; margin-bottom:10px;
+  }
+  .tool-row label{font-size:13px; color:var(--muted); flex:1}
+  .tool-row input[type="number"]{
+    background:var(--bg2); border:1px solid var(--line-strong);
+    padding:8px 12px; border-radius:8px; font-size:14px; color:var(--ink);
+    font-family:var(--mono); width:130px; text-align:right;
+  }
+  .tool-row input:focus{border-color:var(--mint)}
+  .tool-result{
+    background:rgba(54,224,166,.08); border:1px solid rgba(54,224,166,.22);
+    padding:14px 16px; border-radius:11px; margin-top:14px;
+  }
+  .tool-result .rlabel{font-size:12px; color:var(--muted); margin-bottom:4px}
+  .tool-result .rvalue{
+    font-family:var(--display); font-size:24px; font-weight:600; color:var(--mint);
+  }
+  .tool-result .rsub{font-size:12.5px; color:var(--muted); margin-top:4px}
+
+  /* dicas */
+  .tips-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:14px}
+  .tip-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:13px;
+    padding:20px;
+  }
+  .tip-card .num{
+    font-family:var(--mono); font-size:11.5px; color:var(--mint);
+    letter-spacing:1.5px; margin-bottom:8px;
+  }
+  .tip-card h4{
+    font-family:var(--display); font-size:16.5px; font-weight:600;
+    margin-bottom:8px; line-height:1.35;
+  }
+  .tip-card p{color:var(--muted); font-size:13.5px; line-height:1.6}
+
+  /* modal de aula */
+  .modal-back{
+    position:fixed; inset:0; background:rgba(6,15,13,.78); backdrop-filter:blur(6px);
+    z-index:100; display:none; align-items:center; justify-content:center; padding:20px;
+  }
+  .modal-back.show{display:flex}
+  .modal{
+    background:var(--bg2); border:1px solid var(--line-strong); border-radius:18px;
+    width:100%; max-width:680px; max-height:88vh; overflow-y:auto;
+    padding:32px;
+  }
+  .modal h2{
+    font-family:var(--display); font-size:24px; font-weight:600;
+    margin-bottom:6px; letter-spacing:-.4px;
+  }
+  .modal .mkick{font-size:12px; color:var(--mint); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:10px}
+  .modal .mbody{color:var(--muted); margin:18px 0; line-height:1.7; font-size:14.5px}
+  .modal .mbody p{margin-bottom:14px}
+  .modal .mclose{margin-top:8px}
+
+  /* responsivo */
+  @media (max-width:780px){
+    .progress-row{grid-template-columns:repeat(2, 1fr)}
+    .welcome h1{font-size:30px}
+    .nav-right .btn span.lbl{display:none}
+    .badge-aluno{display:none}
+  }
+  @media (max-width:500px){
+    .progress-row{grid-template-columns:1fr 1fr}
+    .stat .value{font-size:22px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ TELA DE LOGIN ============ -->
+<div class="gate-screen" id="gateScreen">
+  <div class="gate-card">
+    <div class="gate-logo">
+      <span class="gate-mark">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 17l5-5 4 3 7-9" stroke="#06241B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 6h4v4" stroke="#06241B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      Fácil Investimentos
+    </div>
+    <h1>Área do Aluno</h1>
+    <p class="sub">Digite a senha de acesso que você recebeu por e-mail após a compra.</p>
+    <form class="gate-form" id="gateForm" autocomplete="off">
+      <input type="password" class="gate-input" id="gatePass" placeholder="Senha de acesso" required>
+      <div class="gate-error" id="gateError">Senha incorreta. Verifique no e-mail de confirmação da compra.</div>
+      <button type="submit" class="gate-btn">Entrar</button>
+    </form>
+    <div class="gate-help">
+      Ainda não é aluno? <a href="index.html#plans">Ver planos →</a><br>
+      Esqueceu a senha? Entre em contato no suporte.
+    </div>
+  </div>
+</div>
+
+<!-- ============ ÁREA LOGADA ============ -->
+<div class="app" id="app">
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <div class="logo">
+        <span class="mark">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 17l5-5 4 3 7-9" stroke="#06241B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 6h4v4" stroke="#06241B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        Fácil <span style="font-weight:400;color:var(--muted)">Investimentos</span>
+        <span class="badge-aluno">Aluno Pro</span>
+      </div>
+      <div class="nav-right">
+        <a href="index.html" class="btn btn-ghost">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="lbl">Site público</span>
+        </a>
+        <button class="btn btn-ghost" id="btnLogout">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M16 17l5-5-5-5M21 12H9M12 19H6a2 2 0 01-2-2V7a2 2 0 012-2h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="lbl">Sair</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <div class="welcome">
+      <div class="kick">Bem-vindo de volta</div>
+      <h1>Sua jornada de investidor continua aqui.</h1>
+      <p>Conteúdo exclusivo, ferramentas avançadas e dicas que vão te tirar do zero ou levar você ao próximo nível, sem economês.</p>
+    </div>
+
+    <!-- Estatísticas -->
+    <div class="progress-row">
+      <div class="stat">
+        <div class="label">Cursos disponíveis</div>
+        <div class="value mint">8</div>
+      </div>
+      <div class="stat">
+        <div class="label">Ferramentas</div>
+        <div class="value">4</div>
+      </div>
+      <div class="stat">
+        <div class="label">Dicas exclusivas</div>
+        <div class="value">12</div>
+      </div>
+      <div class="stat">
+        <div class="label">Atualizações/mês</div>
+        <div class="value gold">+4</div>
+      </div>
+    </div>
+
+    <!-- ============ CURSOS PREMIUM ============ -->
+    <section class="block">
+      <div class="section-head">
+        <h2>Cursos Premium</h2>
+        <div class="hint">8 cursos · do iniciante ao avançado</div>
+      </div>
+      <div class="courses-grid" id="coursesGrid">
+        <!-- preenchido via JS -->
+      </div>
+    </section>
+
+    <!-- ============ FERRAMENTAS INTERATIVAS ============ -->
+    <section class="block">
+      <div class="section-head">
+        <h2>Ferramentas do Investidor</h2>
+        <div class="hint">Use à vontade, quantas vezes quiser</div>
+      </div>
+
+      <div class="tools-grid">
+
+        <!-- Calculadora de aposentadoria -->
+        <div class="tool-card">
+          <h3>
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none"><path d="M12 7v5l3 2M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+            Aposentadoria
+          </h3>
+          <p class="tdesc">Descubra quanto você precisa juntar pra viver de renda.</p>
+          <div class="tool-row">
+            <label for="aprRenda">Renda mensal desejada (R$)</label>
+            <input type="number" id="aprRenda" value="5000" min="0">
+          </div>
+          <div class="tool-row">
+            <label for="aprTaxa">Rendimento anual (%)</label>
+            <input type="number" id="aprTaxa" value="6" min="0" step="0.5">
+          </div>
+          <div class="tool-result">
+            <div class="rlabel">Patrimônio necessário</div>
+            <div class="rvalue" id="aprResult">R$ 1.000.000</div>
+            <div class="rsub" id="aprSub">Pra ter R$ 5.000/mês de renda passiva</div>
+          </div>
+        </div>
+
+        <!-- Aporte mensal pra meta -->
+        <div class="tool-card">
+          <h3>
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none"><path d="M3 3v18h18M7 14l4-4 4 4 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Aporte mensal pra meta
+          </h3>
+          <p class="tdesc">Calcule quanto guardar por mês pra alcançar um objetivo.</p>
+          <div class="tool-row">
+            <label for="metaValor">Meta (R$)</label>
+            <input type="number" id="metaValor" value="100000" min="0">
+          </div>
+          <div class="tool-row">
+            <label for="metaAnos">Prazo (anos)</label>
+            <input type="number" id="metaAnos" value="10" min="1">
+          </div>
+          <div class="tool-row">
+            <label for="metaTaxa">Rendimento anual (%)</label>
+            <input type="number" id="metaTaxa" value="8" min="0" step="0.5">
+          </div>
+          <div class="tool-result">
+            <div class="rlabel">Aporte mensal</div>
+            <div class="rvalue" id="metaResult">R$ 540</div>
+            <div class="rsub">Investido todo mês pelos próximos anos</div>
+          </div>
+        </div>
+
+        <!-- Alocação de carteira -->
+        <div class="tool-card">
+          <h3>
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2a10 10 0 110 20 10 10 0 010-20zm0 0v10l7 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Perfil e alocação
+          </h3>
+          <p class="tdesc">Sugestão de divisão da carteira pelo seu perfil.</p>
+          <div class="tool-row">
+            <label for="perfil">Perfil de investidor</label>
+            <select id="perfil" style="background:var(--bg2);border:1px solid var(--line-strong);padding:8px 12px;border-radius:8px;color:var(--ink);font-size:14px;flex:1">
+              <option value="conservador">Conservador</option>
+              <option value="moderado" selected>Moderado</option>
+              <option value="arrojado">Arrojado</option>
+            </select>
+          </div>
+          <div class="tool-result" id="alocResult" style="margin-top:18px">
+            <div class="rlabel">Sugestão de carteira</div>
+            <div id="alocList" style="margin-top:8px;font-size:14px;line-height:1.9"></div>
+          </div>
+        </div>
+
+        <!-- Inflação x rendimento -->
+        <div class="tool-card">
+          <h3>
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M19 12l-7 7-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Rendimento real
+          </h3>
+          <p class="tdesc">Veja quanto seu investimento rende DEPOIS da inflação.</p>
+          <div class="tool-row">
+            <label for="rendNominal">Rendimento nominal (%)</label>
+            <input type="number" id="rendNominal" value="12" min="0" step="0.5">
+          </div>
+          <div class="tool-row">
+            <label for="rendInflacao">Inflação esperada (%)</label>
+            <input type="number" id="rendInflacao" value="4.5" min="0" step="0.5">
+          </div>
+          <div class="tool-result">
+            <div class="rlabel">Ganho real</div>
+            <div class="rvalue" id="rendResult">7,18% a.a.</div>
+            <div class="rsub">É o que você ganha além de manter o poder de compra</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============ DICAS EXCLUSIVAS ============ -->
+    <section class="block">
+      <div class="section-head">
+        <h2>Dicas Exclusivas pra Alunos</h2>
+        <div class="hint">12 conteúdos que não aparecem no site público</div>
+      </div>
+      <div class="tips-grid" id="tipsGrid">
+        <!-- preenchido via JS -->
+      </div>
+    </section>
+
+  </main>
+
+</div>
+
+<!-- Modal de aula -->
+<div class="modal-back" id="modalBack">
+  <div class="modal">
+    <div class="mkick" id="modalKick">Curso premium</div>
+    <h2 id="modalTitle">Título</h2>
+    <div class="mbody" id="modalBody"></div>
+    <button class="btn btn-primary mclose" id="modalClose">Fechar</button>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   ÁREA DO ALUNO — Fácil Investimentos
+   Senha padrão: aluno2026
+   Pra trocar: altera a constante SENHA abaixo e re-suba o arquivo.
+   ATENÇÃO: esta é uma proteção LEVE (frontend). Pra segurança real,
+   integre com Hotmart, Kiwify ou Stripe.
+   ========================================================= */
+
+const SENHA = "aluno2026";  // ← troque aqui pela senha que quiser
+
+const gateScreen = document.getElementById('gateScreen');
+const app = document.getElementById('app');
+const gateForm = document.getElementById('gateForm');
+const gatePass = document.getElementById('gatePass');
+const gateError = document.getElementById('gateError');
+const btnLogout = document.getElementById('btnLogout');
+
+// checa se já está logado nessa sessão
+function checkAuth(){
+  if(sessionStorage.getItem('fi_logged') === 'yes'){
+    showApp();
+  } else {
+    gateScreen.style.display = 'grid';
+    setTimeout(()=>gatePass.focus(), 100);
+  }
+}
+
+function showApp(){
+  gateScreen.style.display = 'none';
+  app.classList.add('active');
+  renderCourses();
+  renderTips();
+  bindTools();
+}
+
+gateForm.addEventListener('submit', e => {
+  e.preventDefault();
+  if(gatePass.value === SENHA){
+    sessionStorage.setItem('fi_logged', 'yes');
+    showApp();
+  } else {
+    gateError.classList.add('show');
+    gatePass.value = '';
+    gatePass.focus();
+  }
+});
+
+btnLogout.addEventListener('click', ()=>{
+  sessionStorage.removeItem('fi_logged');
+  location.reload();
+});
+
+/* ============ CURSOS ============ */
+const courses = [
+  {tag:'Iniciante', tagType:'mint', title:'Fundamentos do mercado financeiro', desc:'Comece do absoluto zero. O que é renda fixa, variável, ações, fundos — sem jargão.', mod:8, dur:'2h 15min', body:'Curso introdutório que cobre os pilares do mercado de capitais. Aulas curtas, com analogias do dia a dia, pra você nunca mais se sentir perdido lendo sobre investimentos.\n\nMódulos: 1) O que é dinheiro investido. 2) Renda fixa vs variável. 3) Tesouro Direto explicado. 4) CDB, LCI, LCA. 5) Introdução a ações. 6) Fundos de investimento. 7) Como começar com R$100. 8) Erros que custam caro.'},
+  {tag:'Iniciante', tagType:'mint', title:'Tesouro Direto na prática', desc:'Como comprar seu primeiro título do governo passo a passo, e qual escolher pra cada objetivo.', mod:6, dur:'1h 45min', body:'Você termina sabendo abrir conta na corretora, fazer login no Tesouro Direto e comprar exatamente o título certo pra cada objetivo (reserva, médio prazo, aposentadoria).\n\nInclui simulações reais com os títulos disponíveis hoje, comparações entre Selic, IPCA+ e Prefixado, e como calcular impostos antes de comprar.'},
+  {tag:'Intermediário', tagType:'gold', title:'Análise fundamentalista de ações', desc:'Aprenda a ler um balanço, calcular múltiplos e identificar empresas baratas com saúde financeira.', mod:10, dur:'4h 20min', body:'Curso que tira você da "dica de amigo" e te dá autonomia pra analisar qualquer empresa. Vamos do DRE até o cálculo de P/L, P/VP, ROE, Dividend Yield e dívida líquida.\n\nUsamos cases reais de empresas listadas na B3 (anonimizadas, mas com dados públicos) pra você fazer as contas junto.'},
+  {tag:'Intermediário', tagType:'gold', title:'Fundos imobiliários (FIIs)', desc:'Como funcionam os FIIs, tipos (tijolo, papel, fundos de fundos) e como montar uma carteira de renda.', mod:7, dur:'2h 50min', body:'Você sai com clareza sobre quanto pode receber por mês investindo em FIIs, como diversificar entre lajes, shoppings, logística e papel, e como ler relatórios gerenciais.\n\nBônus: planilha de acompanhamento de FIIs e checklist de análise antes de comprar.'},
+  {tag:'Intermediário', tagType:'gold', title:'Carteira previdenciária', desc:'Monte uma carteira pensada pra durar 30+ anos, com aporte mensal automático.', mod:8, dur:'3h 10min', body:'Curso voltado pra quem quer parar de pensar todo mês "no que invisto agora?". Você vai sair com uma carteira definida, regras de rebalanceamento e gatilhos de aporte automáticos.\n\nMostramos como combinar Tesouro, ações dividendeiras, FIIs e ETFs internacionais.'},
+  {tag:'Avançado', tagType:'gold', title:'Opções e proteção de carteira', desc:'Entenda como usar opções pra proteger sua carteira em quedas (puts) e gerar renda extra (covered calls).', mod:9, dur:'4h', body:'CURSO AVANÇADO. Não é especulação — é proteção. Aprenda a usar derivativos pra travar o risco da sua carteira de ações em momentos de incerteza, e como gerar renda mensal vendendo opções cobertas.\n\nPré-requisito: ter feito o curso de análise fundamentalista ou já operar ações.'},
+  {tag:'Avançado', tagType:'gold', title:'Investindo no exterior', desc:'Como abrir conta lá fora, comprar ações e ETFs americanos, e declarar pra Receita.', mod:8, dur:'3h 30min', body:'Diversificação geográfica é uma das defesas mais subestimadas. Você vai sair com conta aberta numa corretora internacional, sabendo o que é S&P 500, Nasdaq, ETFs como SPY/VOO/QQQ, e como declarar tudo no IR sem dor de cabeça.\n\nInclui: comparação de corretoras, custos de remessa e tributação Brasil x EUA.'},
+  {tag:'Bônus', tagType:'mint', title:'Psicologia do investidor', desc:'Por que a maioria perde dinheiro mesmo investindo "certo" — e como dominar suas emoções.', mod:5, dur:'1h 30min', body:'O maior inimigo do seu patrimônio não é o mercado, é você. Esse curso curto fala sobre vieses (ancoragem, aversão à perda, FOMO) e dá ferramentas práticas pra você não vender no fundo nem comprar no topo.\n\nIdeal pra revisitar nos momentos de crise.'},
+];
+
+function renderCourses(){
+  const grid = document.getElementById('coursesGrid');
+  grid.innerHTML = courses.map((c, i) => `
+    <div class="course-card" data-i="${i}">
+      <span class="course-tag ${c.tagType}">${c.tag}</span>
+      <h3>${c.title}</h3>
+      <p>${c.desc}</p>
+      <div class="course-meta">
+        <span><svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> ${c.mod} módulos</span>
+        <span><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> ${c.dur}</span>
+      </div>
+    </div>
+  `).join('');
+  grid.querySelectorAll('.course-card').forEach(card => {
+    card.addEventListener('click', ()=>openCourse(+card.dataset.i));
+  });
+}
+
+function openCourse(i){
+  const c = courses[i];
+  document.getElementById('modalKick').textContent = c.tag.toUpperCase() + ' · ' + c.dur;
+  document.getElementById('modalTitle').textContent = c.title;
+  document.getElementById('modalBody').innerHTML = c.body.split('\n\n').map(p=>`<p>${p}</p>`).join('');
+  document.getElementById('modalBack').classList.add('show');
+}
+document.getElementById('modalClose').addEventListener('click', ()=>{
+  document.getElementById('modalBack').classList.remove('show');
+});
+document.getElementById('modalBack').addEventListener('click', e=>{
+  if(e.target.id === 'modalBack') document.getElementById('modalBack').classList.remove('show');
+});
+
+/* ============ DICAS ============ */
+const tips = [
+  {n:'Dica #01', t:'A primeira regra: reserva de emergência ANTES de investir', d:'Tenha de 3 a 6 meses dos seus custos guardados em Tesouro Selic ou CDB de liquidez diária. Sem isso, qualquer imprevisto te força a vender ações no pior momento.'},
+  {n:'Dica #02', t:'Aporte automático ganha de "investir quando sobra"', d:'Configure um débito automático no dia que recebe seu salário. O que sobra no fim do mês é zero pra quase todo mundo. O que sai automático, sobra no longo prazo.'},
+  {n:'Dica #03', t:'CDI não é coisa de banco, é seu referencial', d:'Qualquer renda fixa que você comprar, compare com o CDI. CDB que paga 90% do CDI é ruim se o concorrente paga 110%. Aprenda a ler esse número.'},
+  {n:'Dica #04', t:'A taxa de administração mata fundo medíocre', d:'Um fundo com 2% de taxa de administração precisa render 2% a mais SÓ pra empatar com a média. Em 20 anos, isso pode ser metade do seu patrimônio. Confira sempre.'},
+  {n:'Dica #05', t:'Diversifique entre classes, não entre 80 ações', d:'Diversificação de verdade é ter renda fixa, ações, FIIs, exterior. Não adianta ter 50 ações do mesmo setor — todas caem juntas numa crise.'},
+  {n:'Dica #06', t:'Dividend Yield alto demais é alerta vermelho', d:'Quando uma empresa paga 15%+ em dividendos, na maioria das vezes é porque o preço da ação caiu muito (problema sério) ou ela está distribuindo mais do que ganha (insustentável).'},
+  {n:'Dica #07', t:'Rebalanceamento anual é mais importante que escolher ações', d:'Defina uma alocação alvo (ex: 60% ações, 30% renda fixa, 10% FIIs). Uma vez por ano, vende o que cresceu e compra o que caiu. Vende caro, compra barato — automático.'},
+  {n:'Dica #08', t:'IPCA+ protege seu poder de compra de verdade', d:'Tesouro IPCA+ é o único investimento que GARANTE rendimento acima da inflação. Pra objetivos longos (10+ anos), é uma defesa anti-perda quase imbatível.'},
+  {n:'Dica #09', t:'Imposto de renda em ações: vendas até R$20mil/mês são isentas', d:'Se você vende menos de R$20 mil em ações no mês (somando todas), o lucro é isento de IR. Pra carteiras pequenas, isso muda muito o resultado líquido.'},
+  {n:'Dica #10', t:'FII paga dividendo isento de IR pra pessoa física', d:'Os rendimentos mensais dos fundos imobiliários (não o ganho na venda da cota) são isentos de imposto de renda — é uma das poucas vantagens fiscais que ainda restam.'},
+  {n:'Dica #11', t:'Aporte na queda dói, mas é onde mora o lucro', d:'Quem aporta quando todo mundo está com medo (crise de 2008, 2020) é quem multiplica patrimônio. O hábito de aportar TODO MÊS, independente do humor do mercado, é a chave.'},
+  {n:'Dica #12', t:'Suas próximas decisões importam mais que as passadas', d:'Não fique se martirizando por investimentos antigos ruins. O que você decide hoje, dado o que sabe agora, é o que constrói o patrimônio. Olhe pra frente.'},
+];
+
+function renderTips(){
+  const grid = document.getElementById('tipsGrid');
+  grid.innerHTML = tips.map(t => `
+    <div class="tip-card">
+      <div class="num">${t.n}</div>
+      <h4>${t.t}</h4>
+      <p>${t.d}</p>
+    </div>
+  `).join('');
+}
+
+/* ============ FERRAMENTAS ============ */
+function fmtBRL(v){
+  return 'R$ ' + Math.round(v).toLocaleString('pt-BR');
+}
+
+function bindTools(){
+  // Aposentadoria
+  const aprRenda = document.getElementById('aprRenda');
+  const aprTaxa = document.getElementById('aprTaxa');
+  function calcApr(){
+    const renda = +aprRenda.value || 0;
+    const taxa = (+aprTaxa.value || 0) / 100;
+    if(taxa <= 0){ document.getElementById('aprResult').textContent = '—'; return; }
+    const patr = (renda * 12) / taxa;
+    document.getElementById('aprResult').textContent = fmtBRL(patr);
+    document.getElementById('aprSub').textContent = `Pra ter ${fmtBRL(renda)}/mês de renda passiva`;
+  }
+  aprRenda.addEventListener('input', calcApr);
+  aprTaxa.addEventListener('input', calcApr);
+  calcApr();
+
+  // Meta — aporte mensal
+  const metaValor = document.getElementById('metaValor');
+  const metaAnos = document.getElementById('metaAnos');
+  const metaTaxa = document.getElementById('metaTaxa');
+  function calcMeta(){
+    const FV = +metaValor.value || 0;
+    const anos = +metaAnos.value || 1;
+    const i = ((+metaTaxa.value || 0) / 100) / 12;
+    const n = anos * 12;
+    if(i === 0){ document.getElementById('metaResult').textContent = fmtBRL(FV/n); return; }
+    // PMT = FV * i / ((1+i)^n - 1)
+    const PMT = FV * i / (Math.pow(1+i, n) - 1);
+    document.getElementById('metaResult').textContent = fmtBRL(PMT);
+  }
+  metaValor.addEventListener('input', calcMeta);
+  metaAnos.addEventListener('input', calcMeta);
+  metaTaxa.addEventListener('input', calcMeta);
+  calcMeta();
+
+  // Alocação
+  const perfil = document.getElementById('perfil');
+  const alocacoes = {
+    conservador: [['Renda Fixa', 75, '#36E0A6'], ['Ações Brasil', 10, '#F0C04A'], ['FIIs', 10, '#7AB8FF'], ['Exterior', 5, '#C492FF']],
+    moderado: [['Renda Fixa', 50, '#36E0A6'], ['Ações Brasil', 20, '#F0C04A'], ['FIIs', 15, '#7AB8FF'], ['Exterior', 15, '#C492FF']],
+    arrojado: [['Renda Fixa', 25, '#36E0A6'], ['Ações Brasil', 35, '#F0C04A'], ['FIIs', 15, '#7AB8FF'], ['Exterior', 25, '#C492FF']],
+  };
+  function calcAloc(){
+    const a = alocacoes[perfil.value];
+    document.getElementById('alocList').innerHTML = a.map(([nome, pct, cor]) => `
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="width:10px;height:10px;border-radius:50%;background:${cor};display:inline-block"></span>
+        <span style="flex:1">${nome}</span>
+        <span style="font-family:var(--mono);color:${cor};font-weight:600">${pct}%</span>
+      </div>
+    `).join('');
+  }
+  perfil.addEventListener('change', calcAloc);
+  calcAloc();
+
+  // Rendimento real
+  const rendNominal = document.getElementById('rendNominal');
+  const rendInflacao = document.getElementById('rendInflacao');
+  function calcRend(){
+    const nom = (+rendNominal.value || 0) / 100;
+    const inf = (+rendInflacao.value || 0) / 100;
+    // ganho real = (1 + nominal) / (1 + inflacao) - 1
+    const real = ((1 + nom) / (1 + inf) - 1) * 100;
+    document.getElementById('rendResult').textContent = real.toFixed(2).replace('.', ',') + '% a.a.';
+  }
+  rendNominal.addEventListener('input', calcRend);
+  rendInflacao.addEventListener('input', calcRend);
+  calcRend();
+}
+
+// inicializa
+checkAuth();
+</script>
+
+</body>
+</html>
